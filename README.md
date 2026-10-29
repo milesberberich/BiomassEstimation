@@ -2,6 +2,7 @@
 
 A repo for estimating the 
 **aboveground biomass** (AGB) of standing **deadwood** at the individual tree level to quantify **forest biomass loss**.
+Usually the biomass loss of forests is not estimated through dead trees, so this is more of an experimental approach.
 
 ### Used data
 
@@ -26,3 +27,4 @@ therefore you need the tree species map.
 - **functions/get_treeheight.py**: consists of two functions: 1. get_treeheight_fromfile read a local CHM and appends those values to the dead tree polygons. 2. get_treeheight_fromDLR pulls [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure) via STAC and appends those values to the polygons. 
 - **functions/estimate_biomass.py**: calculates the biomass using the approach of [Jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388)
 - **analysis.ipynb**: uses all the function mentions above in a analysis pipeline
+- **timeseries_DLRbiomass.ipynb**: create a timeseries of the biomass estimation of [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure) as a comparison
