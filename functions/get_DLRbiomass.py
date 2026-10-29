@@ -4,15 +4,16 @@ import rasterio
 from rasterio.mask import mask
 from rasterio.io import MemoryFile
 
-def get_biomass_fromDLR(year: int, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
+
+
+def get_biomass_fromDLR(catalog, year: int, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
 
     # defining AOI
     aoi = gpd.read_file(aoi_path)
     bbox = aoi.to_crs("EPSG:4326").total_bounds
 
     # pulling data via STAC
-    search = Client.open("https://geoservice.dlr.de/eoc/ogc/stac/v1").search(
-        collections=["FOREST_STRUCTURE_DE_AGBD_P1Y"], bbox=bbox, datetime=f"{year}-01-01/{year}-12-31")
+    search = catalog.search(collections=["FOREST_STRUCTURE_DE_AGBD_P1Y"], bbox=bbox, datetime=f"{year}-01-01/{year}-12-31")
     url = list(next(search.items()).assets.values())[0].href
 
     # converting to rasterio-dataset
