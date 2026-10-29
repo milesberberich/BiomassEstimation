@@ -27,10 +27,10 @@ therefore you need the tree species map.
 
 - **[get_treespecies](functions/get_treespecies.py)**: loads [Wegler et al.](https://geoservice.dlr.de/web/datasets/treespecies_de_2022) from a local file and appends the information (conifer/broadleaved) to the dead tree polygons.
 
-- **[get_treeheight.py](functions/get_treeheight.py)**: consists of two functions: 1. `get_treeheight_fromfile` read a local CHM and appends those values to the dead tree polygons. 2. `get_treeheight_fromDLR` pulls [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure) via STAC and appends those values to the polygons. 
+- **[get_treeheight](functions/get_treeheight.py)**: consists of two functions: 1. `get_treeheight_fromfile` read a local CHM and appends those values to the dead tree polygons. 2. `get_treeheight_fromDLR` pulls [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure) via STAC and appends those values to the polygons. 
 
-- **[functions/estimate_biomass.py](functions/estimate_biomass.py)**: calculates the biomass using the approach of [Jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388)
+- **[functions/estimate_biomass](functions/estimate_biomass.py)**: calculates the biomass using the approach of [Jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388)
 
-- **[analysis.ipynb](analysis.ipynb)**: uses all the function mentions above in a analysis pipeline
+- **[analysis](analysis.ipynb)**: uses all the function mentions above in a analysis pipeline
 
-- **[timeseries_DLRbiomass.ipynb](timeseries_DLRbiomass.ipynb)**: create a timeseries of the DLR-biomass data for comparison
+- **[timeseries_DLRbiomass](timeseries_DLRbiomass.ipynb)**: create a timeseries of the DLR-biomass data for comparison
