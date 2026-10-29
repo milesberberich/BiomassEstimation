@@ -6,14 +6,15 @@ A repo for estimating the
 ### Used data
 
 - **Dead Trees polygons**: created using a finetuned [DeepTrees](https://deeptrees.de/)-model and arial imagery
-- **Canopy height model** (CHM)
+- **Canopy height model** (CHM) e.g. [Asam et al.](https://geoservice.dlr.de/web/datasets/woody_cover_by_23-24) or [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure)
 - **Tree species maps**: conifers/broadleaved, e.g. [Blickensdörfer et al.](https://www.openagrar.de/receive/openagrar_mods_00084346) or [Wegler et al.](https://geoservice.dlr.de/web/datasets/treespecies_de_2022)
 
 ### Methodoloy
 
-[Jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) developed a model to calculate AGB (and DBH)
-only from parameters that could be remotely sensed:\
-*Tree height* and *crown diameter*. This model is used. 
+[Jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) developed a model to calculate AGB (and DBH) only from parameters that could be remotely sensed:\
+*Tree height* and *crown diameter*.\
+This model is used. 
 
+The *crown diameter* is derived from the dead tree polygons. Tree height is taken from the CHM.
 The model varies whether you estimate the biomass of a conifer or a broadleaved tree, 
-therefore you need the tree species map. The *crown diameter* is derived from the dead tree polygons. Tree height is adopted from the CHM.
+therefore you need the tree species map. 
