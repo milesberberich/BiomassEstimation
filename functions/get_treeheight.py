@@ -7,12 +7,10 @@ def get_treeheight(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.GeoDataFr
         if polygon.crs != src.crs:
             polygon = polygon.to_crs(src.crs)
 
-    stats = zonal_stats(
-        polygon,
-        raster_path,
-        stats=["mean"],
-        all_touched=True)
+    stats = zonal_stats(polygon.geometry, raster_path, stats=["mean"], all_touched=True)
 
-    polygon["treeheight"] = [s.get("max") for s in stats]
+    polygon["treeheight"] = [s.get("mean") for s in stats]
+    print(f"treeheight derived")
 
     return polygon.to_crs("EPSG:25832")
+

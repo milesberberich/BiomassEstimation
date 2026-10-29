@@ -23,4 +23,5 @@ def get_treespecies(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.GeoDataF
             results.append(0)
 
     polygon["treespecies"] = results
+    print(f"species derived")
     return polygon.to_crs("EPSG:25832")
