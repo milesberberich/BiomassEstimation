@@ -1,7 +1,8 @@
 import geopandas as gpd
 
 
-def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.GeoDataFrame:
+def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale = True) -> gpd.GeoDataFrame:
+    ''' Load a tree height dataset from a file. and appends the information to the polygons. If no scaling is needed, switch scale to False.'''
     with rasterio.open(raster_path) as src:
         if polygon.crs != src.crs:
             polygon = polygon.to_crs(src.crs)
@@ -20,7 +21,7 @@ def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.
     polygon["treeheight"] = [s.get("mean") or 0.0 for s in stats]
 
     # scaling to meters
-    polygon["treeheight"] = polygon["treeheight"] / 100
+    if scale: polygon["treeheight"] = polygon["treeheight"] / 100
 
     print("treeheight derived")
 
