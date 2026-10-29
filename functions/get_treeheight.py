@@ -1,7 +1,7 @@
 import geopandas as gpd
 
 
-def get_treeheight(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.GeoDataFrame:
+def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.GeoDataFrame:
     with rasterio.open(raster_path) as src:
         if polygon.crs != src.crs:
             polygon = polygon.to_crs(src.crs)
@@ -33,7 +33,7 @@ from rasterstats import zonal_stats
 
 def get_treeheight_from_DLR(polygon: gpd.GeoDataFrame, year: str, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
 
-    if year =="2016":
+    if year < "2017":
         print("Die Daten beginnen erst 2017, daher benutze ich jetzt die Daten aus 2017")
         year = "2017"
 
