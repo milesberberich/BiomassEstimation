@@ -31,11 +31,11 @@ from rasterio.mask import mask
 from rasterio.io import MemoryFile
 from rasterstats import zonal_stats
 
-def get_treeheight_from_DLR(polygon: gpd.GeoDataFrame, year: str, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
+def get_treeheight_fromDLR(polygon: gpd.GeoDataFrame, year: int, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
 
-    if year < "2017":
+    if year < 2017:
         print("Die Daten beginnen erst 2017, daher benutze ich jetzt die Daten aus 2017")
-        year = "2017"
+        year = 2017
 
     # defining AOI
     aoi = gpd.read_file(aoi_path)
