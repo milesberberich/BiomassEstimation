@@ -18,7 +18,12 @@ def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str) -> gpd.
     )
 
     polygon["treeheight"] = [s.get("mean") or 0.0 for s in stats]
+
+    # scaling to meters
+    polygon["treeheight"] = polygon["treeheight"] / 100
+
     print("treeheight derived")
+
     return polygon.to_crs("EPSG:25832")
 
 
@@ -34,7 +39,7 @@ from rasterstats import zonal_stats
 def get_treeheight_fromDLR(polygon: gpd.GeoDataFrame, year: int, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
 
     if year < 2017:
-        print("Die Daten beginnen erst 2017, daher benutze ich jetzt die Daten aus 2017")
+        print("The dataset begins in 2017. For all prior years, 2017 is used.")
         year = 2017
 
     # defining AOI
@@ -63,6 +68,8 @@ def get_treeheight_fromDLR(polygon: gpd.GeoDataFrame, year: int, aoi_path: str =
     # get values to polygons
     stats = zonal_stats(polygon.geometry, dataset.read(1), affine=dataset.transform, nodata=dataset.nodata, stats=["mean"], all_touched=True)
     polygon["treeheight"] = [s.get("mean") or 0.0 for s in stats]
+
+    print("treeheight derived")
 
     return polygon.to_crs("EPSG:25832")
 
