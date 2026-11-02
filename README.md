@@ -36,3 +36,7 @@ therefore you need the tree species map.
 
 - **[analysis_allometry](analysis_allometry.py)**: a script which visualizes different allometrys with regard to the species.
 
+
+### Configuration
+
+Filepaths can be changed using ``basepath``. 

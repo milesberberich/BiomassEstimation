@@ -58,8 +58,8 @@ print(trees16[["treespecies", "treetype"]].head())
 # ## get tree height
 
 
-treeheights16 = get_treeheight_fromDLR(polygon=trees16, year = 2016)
-treeheights21 = get_treeheight_fromDLR(polygon=trees21, year = 2021)
+treeheights16 = get_treeheight_fromDLR(polygon=trees16, year = 2016, aoi_path=f"{basepath}/aoi.geojson")
+treeheights21 = get_treeheight_fromDLR(polygon=trees21, year = 2021, aoi_path=f"{basepath}/aoi.geojson")
 
 
 
