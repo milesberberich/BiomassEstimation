@@ -1,8 +1,7 @@
 ### Objective
 
 A repo for estimating the 
-**aboveground biomass** (AGB) of standing **deadwood** at the individual tree level to quantify **forest biomass loss**.
-Usually the biomass loss of forests is not estimated through dead trees, so this is more of an experimental approach. The script can be used for alive trees as well. 
+**aboveground biomass** (AGB) at the individual tree level to quantify **forest biomass loss**. The code can be used for vital and dead trees. 
 
 ### Used data
 
@@ -17,7 +16,7 @@ Usually the biomass loss of forests is not estimated through dead trees, so this
 *Tree height* and *crown diameter*.
 
 
-The *crown diameter* is derived from the dead tree polygons. Tree height is taken from the CHM.
+The *crown diameter* is derived from the tree polygons. Tree height is taken from the CHM.
 The model varies whether you estimate the biomass of a conifer or a broadleaved tree, 
 therefore you need the tree species map. 
 
@@ -34,3 +33,4 @@ therefore you need the tree species map.
 - **[analysis](analysis.ipynb)**: uses all the function mentions above in a analysis pipeline
 
 - **[timeseries_DLRbiomass](timeseries_DLRbiomass.ipynb)**: create a timeseries of the DLR-biomass data for comparison
+
