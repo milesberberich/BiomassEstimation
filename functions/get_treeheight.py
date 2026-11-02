@@ -37,7 +37,7 @@ from rasterio.mask import mask
 from rasterio.io import MemoryFile
 from rasterstats import zonal_stats
 
-def get_treeheight_fromDLR(polygon: gpd.GeoDataFrame, year: int, aoi_path: str = "/home/berberic/Documents/data/training_data2/bonn_trainingdata/bonn_forest.geojson"):
+def get_treeheight_fromDLR(polygon: gpd.GeoDataFrame, year: int, aoi_path: str):
 
     if year < 2017:
         print("The dataset begins in 2017. For all prior years, 2017 is used.")

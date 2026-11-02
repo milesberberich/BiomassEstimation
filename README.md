@@ -34,3 +34,9 @@ therefore you need the tree species map.
 
 - **[timeseries_DLRbiomass](timeseries_DLRbiomass.ipynb)**: create a timeseries of the DLR-biomass data for comparison
 
+- **[analysis_allometry](analysis_allometry.py)**: a script which visualizes different allometrys with regard to the species.
+
+
+### Configuration
+
+Filepaths can be changed using ``basepath``. Most other data should be stored in self-explaining subdirectories. The subdirectories and filenames can than be changed in the analysis-files. It is recommended to use the same subdirectories: /trees for tree polygons, /treespecies for treespecies maps /results/biomass
