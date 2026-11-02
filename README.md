@@ -30,7 +30,7 @@ therefore you need the tree species map.
 
 - **[functions/estimate_biomass](functions/estimate_biomass.py)**: calculates the biomass using the approach of [Jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388)
 
-- **[analysis](analysis.ipynb)**: uses all the function mentions above in a analysis pipeline
+- **[analysis](analysis_biomass.ipynb)**: uses all the function mentions above in a analysis pipeline
 
 - **[timeseries_DLRbiomass](timeseries_DLRbiomass.ipynb)**: create a timeseries of the DLR-biomass data for comparison
 
