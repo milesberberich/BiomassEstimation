@@ -34,3 +34,5 @@ therefore you need the tree species map.
 
 - **[timeseries_DLRbiomass](timeseries_DLRbiomass.ipynb)**: create a timeseries of the DLR-biomass data for comparison
 
+- **[analysis_allometry](analysis_allometry.py)**: a script which visualizes different allometrys with regard to the species.
+
