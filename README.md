@@ -39,4 +39,4 @@ therefore you need the tree species map.
 
 ### Configuration
 
-Filepaths can be changed using ``basepath``. 
+Filepaths can be changed using ``basepath``. Most other data should be stored in self-explaining subdirectories. The subdirectories and filenames can than be changed in the analysis-files. It is recommended to use the same subdirectories: /trees for tree polygons, /treespecies for treespecies maps /results/biomass
