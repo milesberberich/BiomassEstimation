@@ -2,12 +2,12 @@
 
 A repo for estimating the 
 **aboveground biomass** (AGB) of standing **deadwood** at the individual tree level to quantify **forest biomass loss**.
-Usually the biomass loss of forests is not estimated through dead trees, so this is more of an experimental approach.
+Usually the biomass loss of forests is not estimated through dead trees, so this is more of an experimental approach. The script can be used for alive trees as well. 
 
 ### Used data
 
 - **Dead Trees polygons**: created using a finetuned [DeepTrees](https://deeptrees.de/)-model and arial imagery
-- **Canopy height model** (CHM) e.g. [Asam et al.](https://geoservice.dlr.de/web/datasets/woody_cover_by_23-24) or [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure)
+- **Canopy height model** (CHM) e.g. [Asam et al.](https://geoservice.dlr.de/web/datasets/woody_cover_by_23-24) or [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure). 
 - **Tree species maps**: conifers/broadleaved, e.g. [Blickensdörfer et al.](https://www.openagrar.de/receive/openagrar_mods_00084346) or [Wegler et al.](https://geoservice.dlr.de/web/datasets/treespecies_de_2022)
 - **AGB data**: data used for comparison, e.g. [Kacic et al.](https://geoservice.dlr.de/web/datasets/forest_structure) 
 
