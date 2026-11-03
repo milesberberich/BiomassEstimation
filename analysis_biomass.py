@@ -12,6 +12,7 @@ from functions.get_diameter import *
 from functions.get_treespecies import *
 from functions.get_treeheight import *
 from functions.histogram_treespecies import *
+import os
 
 import matplotlib
 matplotlib.use("Agg")
@@ -60,11 +61,8 @@ print(trees16[["treespecies", "treetype"]].head())
 
 # ## get tree height
 
-
-treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_bonn_1m.tif",scale = False)
-treeheights21 = get_treeheight_fromDLR(polygon=trees21, year = 2021, aoi_path=f"{basepath}/aoi.geojson")
-
-
+treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale = False)
+treeheights21 = get_treeheight_fromfile(polygon=trees21, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale = False)
 
 
 # handle zeros in treeheight by using mean instead
@@ -85,31 +83,19 @@ if plot_treeheight:
 
 # ## estimate biomass
 
-
-
 biomass16 = estimate_biomass(treeheights16)
 biomass21 = estimate_biomass(treeheights21)
-
-
-
 
 if export_results:
     biomass16.to_file(f"{basepath}/results/biomass/biomass16.geojson", driver="GeoJSON")
     biomass21.to_file(f"{basepath}/results/biomass/biomass21.geojson", driver="GeoJSON")
-
-
 
 total_deadAGB16 = sum(biomass16["AGB"])
 print(f"dead tree biomass 2016:     {round(total_deadAGB16/1000)} tonnen")
 total_deadAGB21 = sum(biomass21["AGB"])
 print(f"dead tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
 
-
 # ## Plots
-
-
-
-import os
 
 # Ensure the plots directory exists before saving
 os.makedirs(f"{basepath}results/plots", exist_ok=True)
