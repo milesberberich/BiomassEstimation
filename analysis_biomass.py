@@ -12,6 +12,9 @@ from functions.get_diameter import *
 from functions.get_treespecies import *
 from functions.get_treeheight import *
 from functions.histogram_treespecies import *
+
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
