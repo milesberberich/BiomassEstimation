@@ -91,8 +91,8 @@ biomass21 = estimate_biomass(treeheights21)
 
 
 if export_results:
-    biomass16.to_file(f"f{basepath}/results/biomass/biomass16.geojson", driver="GeoJSON")
-    biomass21.to_file(f"f{basepath}/results/biomass/biomass21.geojson"", driver="GeoJSON")
+    biomass16.to_file(f"{basepath}/results/biomass/biomass16.geojson", driver="GeoJSON")
+    biomass21.to_file(f"{basepath}/results/biomass/biomass21.geojson", driver="GeoJSON")
 
 
 
