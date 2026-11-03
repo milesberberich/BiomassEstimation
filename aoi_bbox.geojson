@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "name": "bonn_bbox",
+  "crs": { 
+    "type": "name", 
+    "properties": { "name": "urn:ogc:def:crs:EPSG::25832" } 
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [353376.0, 5608690.0],
+            [353376.0, 5623255.0],
+            [369056.0, 5623255.0],
+            [369056.0, 5608690.0],
+            [353376.0, 5608690.0]
+          ]
+        ]
+      }
+    }
+  ]
+}
