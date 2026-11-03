@@ -39,4 +39,12 @@ therefore you need the tree species map.
 
 ### Configuration
 
-Filepaths can be changed using ``basepath``. Most data should be stored in self-explaining subdirectories. The subdirectories and filenames can than be changed in the analysis-files. 
+Filepaths can be changed using ``basepath``. Most data should be stored in self-explaining subdirectories: 
+- ``basepath/trees``: for tree polgyons
+- ``basepath/treespecies``: for treespecies rasters
+- ``basepath/treeheight``: for a tree height rasters
+- `basepath/aoi.geojson`: for a AOI polygon
+- `basepath/results/biomass`: for output tree polygons with biomass information
+- `basepath/results/plots`: used to export plots
+
+The subdirectories and filenames can than be changed in the analysis-files. 
