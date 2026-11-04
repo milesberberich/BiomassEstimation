@@ -44,8 +44,8 @@ print("Crown diameters were calculated.")
 
 # ## get tree species
 
-trees16 = get_treespecies(polygon=trees16, raster_path= f"{basepath}/treespecies/treespecies_2016_bonn.tif")
-trees21 = get_treespecies(polygon=trees21, raster_path=f"{basepath}/treespecies/treespecies_2021_bonn.tif")
+trees16 = get_treespecies(polygon=trees16, raster_path= f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
+trees21 = get_treespecies(polygon=trees21, raster_path=f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
 print("Tree species were derived.")
 
 # ## get tree height
