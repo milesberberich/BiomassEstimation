@@ -1,29 +1,38 @@
+import numpy as np
 import geopandas as gpd
 
-
 def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale = True) -> gpd.GeoDataFrame:
-    ''' Load a tree height dataset from a file. and appends the information to the polygons. If no scaling is needed, switch scale to False.'''
+    ''' Load a tree height dataset from a file and append the information to the polygons. '''
     with rasterio.open(raster_path) as src:
         if polygon.crs != src.crs:
             polygon = polygon.to_crs(src.crs)
-        array = src.read(1)
+        array = src.read(1).astype('float64') # float64 prevents numpy sum overflow
         transform = src.transform
+        actual_nodata = src.nodata
+
+    # Mask out actual nodata, NaNs, and negative CHM noise (anything < 0)
+    if actual_nodata is not None:
+        array[array == actual_nodata] = np.nan
+    array[array < 0] = 0.0  # Clamp negative CHM noise to 0
+    array[np.isnan(array)] = -9999.0
 
     stats = zonal_stats(
         polygon.geometry,
         array,
         affine=transform,
-        nodata=-32767,
+        nodata=-9999.0,
         stats=["mean"],
         all_touched=True
     )
 
-    polygon["treeheight"] = [s.get("mean") or 0.0 for s in stats]
+    # Use float(s["mean"]) if not None, otherwise 0.0
+    polygon["treeheight"] = [float(s["mean"]) if s["mean"] is not None else 0.0 for s in stats]
 
     # scaling to meters
-    if scale: polygon["treeheight"] = polygon["treeheight"] / 100
+    if scale:
+        polygon["treeheight"] = polygon["treeheight"] / 100
 
-    print("treeheight derived")
+    print("treeheight derived", flush=True)
 
     return polygon.to_crs("EPSG:25832")
 
