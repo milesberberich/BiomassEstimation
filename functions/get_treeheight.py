@@ -1,41 +1,35 @@
 import numpy as np
 import geopandas as gpd
+import numpy as np
+import geopandas as gpd
+import rasterio
+from rasterstats import zonal_stats
 
-def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale = True) -> gpd.GeoDataFrame:
-    ''' Load a tree height dataset from a file and append the information to the polygons. '''
+def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale=True) -> gpd.GeoDataFrame:
+    '''Load a tree height dataset from a file and append the information to the polygons.'''
     with rasterio.open(raster_path) as src:
         if polygon.crs != src.crs:
             polygon = polygon.to_crs(src.crs)
-        array = src.read(1).astype('float64') # float64 prevents numpy sum overflow
-        transform = src.transform
-        actual_nodata = src.nodata
 
-    # Mask out actual nodata, NaNs, and negative CHM noise (anything < 0)
-    if actual_nodata is not None:
-        array[array == actual_nodata] = np.nan
-    array[array < 0] = 0.0  # Clamp negative CHM noise to 0
-    array[np.isnan(array)] = -9999.0
-
+    # Pass raster_path directly so rasterstats only reads windowed chunks & respects internal nodata
     stats = zonal_stats(
         polygon.geometry,
-        array,
-        affine=transform,
-        nodata=-9999.0,
+        raster_path,
         stats=["mean"],
         all_touched=True
     )
 
-    # Use float(s["mean"]) if not None, otherwise 0.0
-    polygon["treeheight"] = [float(s["mean"]) if s["mean"] is not None else 0.0 for s in stats]
+    # Extract mean and clamp any negative CHM noise (< 0) or None/NaN to 0.0
+    heights = [s["mean"] if (s["mean"] is not None and np.isfinite(s["mean"]) and s["mean"] > 0) else 0.0 for s in stats]
+    polygon["treeheight"] = heights
 
     # scaling to meters
     if scale:
-        polygon["treeheight"] = polygon["treeheight"] / 100
+        polygon["treeheight"] = polygon["treeheight"] / 100.0
 
     print("treeheight derived", flush=True)
 
     return polygon.to_crs("EPSG:25832")
-
 
 #########################################################################################################
 
