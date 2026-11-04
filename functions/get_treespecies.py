@@ -17,6 +17,7 @@ BROADLEAVED = {"beech", "oak", "birch", "alder", "other deciduous", "odh", "odl"
 
 
 def get_treespecies(polygon: gpd.GeoDataFrame, raster_path: str, data_source: str = "wegler") -> gpd.GeoDataFrame:
+    '''This function extracts the treespecies. And applies the legend for wegler and blickensdörfer'''
 
     if data_source == "wegler":
         species_mapping = WEGLER_SPECIES

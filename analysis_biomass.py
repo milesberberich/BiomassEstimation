@@ -33,8 +33,8 @@ export_plots = args.export_plots
 
 # ## load polygons
 
-trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson")
-trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
+trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson").head(1)
+trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson").head(250)
 print("Polygons were loaded.")
 # ## calculate diameter
 
@@ -87,7 +87,7 @@ print(f"dead tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
 
 # ## Plots
 # Ensure the plots directory exists before saving
-os.makedirs(f"{basepath}results/plots", exist_ok=True)
+os.makedirs(f"{basepath}/results/plots", exist_ok=True)
 
 print(f"Mean biomass per dead tree in 2016: {biomass16['AGB'].mean()}")
 print(f"Mean biomass per dead tree in 2021: {biomass21['AGB'].mean()}")
@@ -97,7 +97,7 @@ biomass16["AGB"].hist(bins=50)
 plt.title("per Tree AGB in 2016")
 plt.xlabel("Tree AGB (kg)")
 plt.ylabel("Number of Tree AGBs in 2016")
-if export_plots: plt.savefig(f"{basepath}results/plots/agb_2016_hist.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/agb_2016_hist.png", bbox_inches='tight')
 plt.close()
 
 # 2. AGB Histogram 2021
@@ -105,49 +105,49 @@ biomass21["AGB"].hist(bins=50)
 plt.title("per Tree AGB in 2021")
 plt.xlabel("Tree AGB (kg)")
 plt.ylabel("Number of Tree AGBs in 2021")
-if export_plots: plt.savefig(f"{basepath}results/plots/agb_2021_hist.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/agb_2021_hist.png", bbox_inches='tight')
 plt.close()
 
 # 3. Tree Height vs Crown Diameter 2016
 biomass16.plot.scatter(x="treeheight", y="diameter", figsize=(8, 5), alpha=0.5, title="Tree Height vs. Crown Diameter in 2016")
 plt.xlabel("Tree Height (m)")
 plt.ylabel("Crown Diameter (m)")
-if export_plots: plt.savefig(f"{basepath}results/plots/height_vs_diameter_2016.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_diameter_2016.png", bbox_inches='tight')
 plt.close()
 
 # 4. Tree Height vs Crown Diameter 2021
 biomass21.plot.scatter(x="treeheight", y="diameter", figsize=(8, 5), alpha=0.5, title="Tree Height vs. Crown Diameter in 2021")
 plt.xlabel("Tree Height (m)")
 plt.ylabel("Crown Diameter (m)")
-if export_plots: plt.savefig(f"{basepath}results/plots/height_vs_diameter_2021.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_diameter_2021.png", bbox_inches='tight')
 plt.close()
 
 # 5. Crown Diameter vs AGB 2016
 biomass16.plot.scatter(x="diameter", y="AGB", figsize=(8, 5), alpha=0.5, title="Diameter vs. AGB in 2016")
 plt.xlabel("Crown Diameter (m)")
 plt.ylabel("AGB (kg)")
-if export_plots: plt.savefig(f"{basepath}results/plots/diameter_vs_agb_2016.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_vs_agb_2016.png", bbox_inches='tight')
 plt.close()
 
 # 6. Crown Diameter vs AGB 2021
 biomass21.plot.scatter(x="diameter", y="AGB", figsize=(8, 5), alpha=0.5, title="Diameter vs. AGB in 2021")
 plt.xlabel("Crown Diameter (m)")
 plt.ylabel("AGB (kg)")
-if export_plots: plt.savefig(f"{basepath}results/plots/diameter_vs_agb_2021.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_vs_agb_2021.png", bbox_inches='tight')
 plt.close()
 
 # 7. Tree Height vs AGB 2016
 biomass16.plot.scatter(x="treeheight", y="AGB", figsize=(8, 5), alpha=0.5, title="Tree Height vs. AGB in 2016")
 plt.xlabel("Tree Height (m)")
 plt.ylabel("AGB (kg)")
-if export_plots: plt.savefig(f"{basepath}results/plots/height_vs_agb_2016.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2016.png", bbox_inches='tight')
 plt.close()
 
 # 8. Tree Height vs AGB 2021
 biomass21.plot.scatter(x="treeheight", y="AGB", figsize=(8, 5), alpha=0.5, title="Tree Height vs. AGB in 2021")
 plt.xlabel("Tree Height (m)")
 plt.ylabel("AGB (kg)")
-if export_plots: plt.savefig(f"{basepath}results/plots/height_vs_agb_2021.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2021.png", bbox_inches='tight')
 plt.close()
 
 
