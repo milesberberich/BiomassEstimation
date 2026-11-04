@@ -34,10 +34,8 @@ export_plots = args.export_plots
 
 # ## load polygons
 
-
-
-trees21 = gpd.read_file(f"{basepath}trees/bonn_2021.geojson")
-trees16 = gpd.read_file(f"{basepath}trees/bonn_2016.geojson")
+trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson")
+trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
 
 
 # ## calculate diameter
