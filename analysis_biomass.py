@@ -34,7 +34,7 @@ export_plots = args.export_plots
 # ## load polygons
 
 trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson").head(1)
-trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson").head(250)
+trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson").sample(550)
 print("Polygons were loaded.")
 # ## calculate diameter
 
@@ -149,13 +149,12 @@ plt.xlabel("Tree Height (m)")
 plt.ylabel("AGB (kg)")
 if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2021.png", bbox_inches='tight')
 plt.close()
-
 # 9. histogram treeheight 2016
 biomass16["treeheight"].hist(bins=50)
 plt.title("per Tree treeheight in 2016")
 plt.xlabel("Treeheight (m)")
 plt.ylabel("Treeheight in 2016")
-if export_plots: plt.savefig(f"{basepath}/results/plots/treeheight_2016_hist.png", bbox_inches='tight')
+if export_plots: plt.savefig(f"{basepath}/results/plots/treeheight_2016_hist.png", bbox_inches="tight")
 plt.close()
 
 # 10. histogram treeheight 2021
@@ -166,7 +165,7 @@ plt.ylabel("Treeheight in 2021")
 if export_plots: plt.savefig(f"{basepath}/results/plots/treeheight_2021_hist.png", bbox_inches="tight")
 plt.close()
 
-# 11.  histogram treeheight 2021
+# 11. histogram diameter 2016
 biomass16["diameter"].hist(bins=50)
 plt.title("per Tree crown diameter in 2016")
 plt.xlabel("Crown diameter (m)")
@@ -174,12 +173,21 @@ plt.ylabel("Number of trees in 2016")
 if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2016_hist.png", bbox_inches="tight")
 plt.close()
 
-# 12.  histogram treeheight 202
+# 12. histogram diameter 2021
 biomass21["diameter"].hist(bins=50)
 plt.title("per Tree crown diameter in 2021")
 plt.xlabel("Crown diameter (m)")
 plt.ylabel("Number of trees in 2021")
 if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2021_hist.png", bbox_inches="tight")
+plt.close()
+
+# 13. pie chart treespecies 2016
+counts = biomass16["treespecies"].value_counts()
+fig, ax = plt.subplots(figsize=(7, 7))
+ax.pie(counts.values, labels=counts.index, autopct="%1.1f%%", startangle=90)
+ax.set_title("Tree species in 2016")
+ax.axis("equal")
+if export_plots: plt.savefig(f"{basepath}/results/plots/treespecies_2016_pie.png", bbox_inches="tight")
 plt.close()
 
 # ## plot from [jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) (fig. 6)
@@ -192,9 +200,6 @@ plt.title("Height (m) × Crown diameter (m) fro dead trees 2021")
 plt.xlabel("Height (m) × Crown diameter (m)")
 plt.ylabel("Number of Trees")
 plt.show()
-
-biomass16["height x crown diameter"] = biomass16["diameter"] * biomass16["treeheight"]
-biomass21["height x crown diameter"] = biomass21["diameter"] * biomass21["treeheight"]
 
 fig, ax = plt.subplots(figsize=(7, 7))
 
@@ -222,7 +227,7 @@ ax.set_ylabel("Aboveground biomass (kg)", fontsize=12)
 ax.legend(loc="lower right", frameon=False, fontsize=11)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
-plt.show()
+if export_plots: plt.savefig(f"{basepath}/results/plots/publication_plot.png", bbox_inches="tight")
 
 
 
