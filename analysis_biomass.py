@@ -150,10 +150,42 @@ plt.ylabel("AGB (kg)")
 if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2021.png", bbox_inches='tight')
 plt.close()
 
+# 9. histogram treeheight 2016
+biomass16["treeheight"].hist(bins=50)
+plt.title("per Tree treeheight in 2016")
+plt.xlabel("Treeheight (m)")
+plt.ylabel("Treeheight in 2016")
+if export_plots: plt.savefig(f"{basepath}/results/plots/treeheight_2016_hist.png", bbox_inches='tight')
+plt.close()
+
+# 10. histogram treeheight 2021
+biomass21["treeheight"].hist(bins=50)
+plt.title("per Tree treeheight in 2021")
+plt.xlabel("Treeheight (m)")
+plt.ylabel("Treeheight in 2021")
+if export_plots: plt.savefig(f"{basepath}/results/plots/treeheight_2021_hist.png", bbox_inches="tight")
+plt.close()
+
+# 11.  histogram treeheight 2021
+biomass16["diameter"].hist(bins=50)
+plt.title("per Tree crown diameter in 2016")
+plt.xlabel("Crown diameter (m)")
+plt.ylabel("Number of trees in 2016")
+if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2016_hist.png", bbox_inches="tight")
+plt.close()
+
+# 12.  histogram treeheight 202
+biomass21["diameter"].hist(bins=50)
+plt.title("per Tree crown diameter in 2021")
+plt.xlabel("Crown diameter (m)")
+plt.ylabel("Number of trees in 2021")
+if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2021_hist.png", bbox_inches="tight")
+plt.close()
 
 # ## plot from [jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) (fig. 6)
 
-
+biomass16["height x crown diameter"] = biomass16["diameter"] * biomass16["treeheight"]
+biomass21["height x crown diameter"] = biomass21["diameter"] * biomass21["treeheight"]
 
 biomass21["height x crown diameter"].hist(bins=50)
 plt.title("Height (m) × Crown diameter (m) fro dead trees 2021")
