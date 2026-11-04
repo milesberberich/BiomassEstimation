@@ -13,7 +13,6 @@ from functions.get_treespecies import *
 from functions.get_treeheight import *
 from functions.histogram_treespecies import *
 import os
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -36,24 +35,24 @@ export_plots = args.export_plots
 
 trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson")
 trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
-
+print("Polygons were loaded.")
 # ## calculate diameter
 
 trees16 = get_diameter(trees16)
 trees21 = get_diameter(trees21)
-
+print("Crown diameters were calculated.")
 
 # ## get tree species
 
 trees16 = get_treespecies(polygon=trees16, raster_path= f"{basepath}/treespecies/treespecies_2016_bonn.tif")
 trees21 = get_treespecies(polygon=trees21, raster_path=f"{basepath}/treespecies/treespecies_2021_bonn.tif")
-
-print(trees16[["treespecies", "treetype"]].head())
+print("Tree species were derived.")
 
 # ## get tree height
 
 treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale = False)
 treeheights21 = get_treeheight_fromfile(polygon=trees21, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale = False)
+print("Tree heights were derived.")
 
 # handle zeros in treeheight by using mean instead
 
@@ -75,6 +74,7 @@ if plot_treeheight:
 
 biomass16 = estimate_biomass(treeheights16)
 biomass21 = estimate_biomass(treeheights21)
+print("Biomass was estimated.")
 
 if export_results:
     biomass16.to_file(f"{basepath}/results/biomass/biomass16.geojson", driver="GeoJSON")
