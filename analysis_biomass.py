@@ -37,9 +37,7 @@ export_plots = args.export_plots
 trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson")
 trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
 
-
 # ## calculate diameter
-
 
 trees16 = get_diameter(trees16)
 trees21 = get_diameter(trees21)
@@ -47,23 +45,18 @@ trees21 = get_diameter(trees21)
 
 # ## get tree species
 
-
-
 trees16 = get_treespecies(polygon=trees16, raster_path= f"{basepath}/treespecies/treespecies_2016_bonn.tif")
 trees21 = get_treespecies(polygon=trees21, raster_path=f"{basepath}/treespecies/treespecies_2021_bonn.tif")
 
-
-
 print(trees16[["treespecies", "treetype"]].head())
-
 
 # ## get tree height
 
 treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale = False)
 treeheights21 = get_treeheight_fromfile(polygon=trees21, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale = False)
 
-
 # handle zeros in treeheight by using mean instead
+
 remove_zeros = True
 
 if remove_zeros: # Trees with 0 as treeheight, get the mean treeheight instead
@@ -77,7 +70,6 @@ if plot_treeheight:
     plt.show()
     treeheights21["treeheight"].hist(bins=25)
     plt.show()
-
 
 # ## estimate biomass
 
@@ -94,7 +86,6 @@ total_deadAGB21 = sum(biomass21["AGB"])
 print(f"dead tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
 
 # ## Plots
-
 # Ensure the plots directory exists before saving
 os.makedirs(f"{basepath}results/plots", exist_ok=True)
 
