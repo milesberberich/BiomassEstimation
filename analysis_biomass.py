@@ -17,11 +17,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
-# ## define basepath/settings
+# ## define basepath/settings ################################################################################################################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry")
-parser.add_argument("--years", nargs="+", default=["2016", "2021"])
+parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/mini_run")
+parser.add_argument("--years", nargs="+", default=["2016"])
 parser.add_argument("--export_results", action="store_true")
 parser.add_argument("--export_plots", action="store_true")
 args = parser.parse_args()
@@ -32,7 +32,7 @@ export_results = args.export_results
 export_plots = args.export_plots
 
 
-# ## load polygons
+# ## load polygons ################################################################################################################################
 
 if "2016" in years:
     trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
@@ -40,7 +40,7 @@ if "2021" in years:
     trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson")
 print("Polygons were loaded.")
 
-# ## calculate diameter
+# ## calculate diameter ################################################################################################################################
 
 if "2016" in years:
     trees16 = get_diameter(trees16)
@@ -56,7 +56,7 @@ if "2021" in years:
     trees21 = get_treespecies(polygon=trees21, raster_path=f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
 print("Tree species were derived.")
 
-# ## get tree height
+# ## get tree height ################################################################################################################################
 
 if "2016" in years:
     treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale=False)
@@ -76,17 +76,9 @@ if remove_zeros:  # Trees with 0 as treeheight, get the mean treeheight instead
     if "2021" in years:
         treeheights21.loc[treeheights21["treeheight"] == 0, "treeheight"] = treeheights21["treeheight"].mean()
 
-plot_treeheight = False
 
-if plot_treeheight:
-    if "2016" in years:
-        treeheights16["treeheight"].hist(bins=25)
-        plt.show()
-    if "2021" in years:
-        treeheights21["treeheight"].hist(bins=25)
-        plt.show()
 
-# ## estimate biomass
+### estimate biomass ################################################################################################################################
 
 if "2016" in years:
     biomass16 = estimate_biomass(treeheights16)
@@ -102,14 +94,14 @@ if export_results:
 
 if "2016" in years:
     total_deadAGB16 = sum(biomass16["AGB"])
-    print(f"dead tree biomass 2016:     {round(total_deadAGB16/1000)} tonnen")
-    print(f"Mean biomass per dead tree in 2016: {biomass16['AGB'].mean()}")
+    print(f" tree biomass 2016:     {round(total_deadAGB16/1000)} tonnen")
+    print(f"Mean biomass per tree in 2016: {biomass16['AGB'].mean()}")
 if "2021" in years:
     total_deadAGB21 = sum(biomass21["AGB"])
-    print(f"dead tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
-    print(f"Mean biomass per dead tree in 2021: {biomass21['AGB'].mean()}")
+    print(f" tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
+    print(f"Mean biomass per tree in 2021: {biomass21['AGB'].mean()}")
 
-# ## Plots
+# ## Plots ################################################################################################################################
 # Ensure the plots directory exists before saving
 os.makedirs(f"{basepath}/results/plots", exist_ok=True)
 

@@ -5,7 +5,7 @@ import geopandas as gpd
 import rasterio
 from rasterstats import zonal_stats
 
-def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale=True) -> gpd.GeoDataFrame:
+def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale=True, metric = "max") -> gpd.GeoDataFrame:
     '''Load a tree height dataset from a file and append the information to the polygons.'''
     with rasterio.open(raster_path) as src:
         if polygon.crs != src.crs:
@@ -15,12 +15,12 @@ def get_treeheight_fromfile(polygon: gpd.GeoDataFrame, raster_path: str, scale=T
     stats = zonal_stats(
         polygon.geometry,
         raster_path,
-        stats=["mean"],
+        stats=[metric],
         all_touched=True
     )
 
     # Extract mean and clamp any negative CHM noise (< 0) or None/NaN to 0.0
-    heights = [s["mean"] if (s["mean"] is not None and np.isfinite(s["mean"]) and s["mean"] > 0) else 0.0 for s in stats]
+    heights = [s[metric] if (s[metric] is not None and np.isfinite(s[metric]) and s[metric] > 0) else 0.0 for s in stats]
     polygon["treeheight"] = heights
 
     # scaling to meters
