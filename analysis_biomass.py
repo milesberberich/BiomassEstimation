@@ -21,91 +21,110 @@ import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/mini_run")
-parser.add_argument("--years", nargs="+", default=["2016"])
+parser.add_argument("--aoi", nargs="+", default=["auwald_2023"])
 parser.add_argument("--export_results", action="store_true")
 parser.add_argument("--export_plots", action="store_true")
 args = parser.parse_args()
 
 basepath = args.basepath
-years = args.years
+aoi = args.aoi
 export_results = args.export_results
 export_plots = args.export_plots
 
 
 # ## load polygons ################################################################################################################################
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
-if "2021" in years:
+if "bonn_2021" in aoi:
     trees21 = gpd.read_file(f"{basepath}/trees/bonn_2021_vital.geojson")
+if "auwald_2023" in aoi:
+    trees23 = gpd.read_file(f"{basepath}/trees/auwald_2023_vital.geojson")
 print("Polygons were loaded.")
 
 # ## calculate diameter ################################################################################################################################
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     trees16 = get_diameter(trees16)
-if "2021" in years:
+if "bonn_2021" in aoi:
     trees21 = get_diameter(trees21)
+if "auwald_2023" in aoi:
+    trees23 = get_diameter(trees23)
 print("Crown diameters were calculated.")
 
-# ## get tree species
+# ## get tree species ################################################################################################################################
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     trees16 = get_treespecies(polygon=trees16, raster_path=f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
-if "2021" in years:
+if "bonn_2021" in aoi:
     trees21 = get_treespecies(polygon=trees21, raster_path=f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
+if "auwald_2023" in aoi:
+    trees23 = get_treespecies(polygon=trees23, raster_path=f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
+    trees23 = trees23.fillna({"treetype": "broadleaved"})    # fill NA! auwald dominated by oak...
 print("Tree species were derived.")
 
 # ## get tree height ################################################################################################################################
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale=False)
     r = treeheights16["treeheight"].corr(treeheights16["diameter"])
     print(f"corellation between treeheight and diameter: {r}")
-if "2021" in years:
+if "bonn_2021" in aoi:
     treeheights21 = get_treeheight_fromfile(polygon=trees21, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale=False)
+if "auwald_2023" in aoi:
+    treeheights23 = get_treeheight_fromfile(polygon=trees23, raster_path=f"{basepath}/treeheight/CHM_1m_auwald.tif", scale=False)
 print("Tree heights were derived.")
 
 # handle zeros in treeheight by using mean instead
 
-remove_zeros = True
+remove_zeros = False
 
 if remove_zeros:  # Trees with 0 as treeheight, get the mean treeheight instead
-    if "2016" in years:
+    if "bonn_2016" in aoi:
         treeheights16.loc[treeheights16["treeheight"] == 0, "treeheight"] = treeheights16["treeheight"].mean()
-    if "2021" in years:
+    if "bonn_2021" in aoi:
         treeheights21.loc[treeheights21["treeheight"] == 0, "treeheight"] = treeheights21["treeheight"].mean()
+    if "auwald_2023" in aoi:
+        treeheights23.loc[treeheights23["treeheight"] == 0, "treeheight"] = treeheights23["treeheight"].mean()
 
 
 
 ### estimate biomass ################################################################################################################################
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     biomass16 = estimate_biomass(treeheights16)
-if "2021" in years:
+if "bonn_2021" in aoi:
     biomass21 = estimate_biomass(treeheights21)
+if "auwald_2023" in aoi:
+    biomass23 = estimate_biomass(treeheights23)
 print("Biomass was estimated.")
 
 if export_results:
-    if "2016" in years:
+    if "bonn_2016" in aoi:
         biomass16.to_file(f"{basepath}/results/biomass/biomass16.geojson", driver="GeoJSON")
-    if "2021" in years:
+    if "bonn_2021" in aoi:
         biomass21.to_file(f"{basepath}/results/biomass/biomass21.geojson", driver="GeoJSON")
+    if "auwald_2023" in aoi:
+        biomass23.to_file(f"{basepath}/results/biomass/biomass23.geojson", driver="GeoJSON")
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     total_deadAGB16 = sum(biomass16["AGB"])
     print(f" tree biomass 2016:     {round(total_deadAGB16/1000)} tonnen")
     print(f"Mean biomass per tree in 2016: {biomass16['AGB'].mean()}")
-if "2021" in years:
+if "bonn_2021" in aoi:
     total_deadAGB21 = sum(biomass21["AGB"])
     print(f" tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
     print(f"Mean biomass per tree in 2021: {biomass21['AGB'].mean()}")
+if "auwald_2023" in aoi:
+    total_deadAGB23 = sum(biomass23["AGB"])
+    print(f" tree biomass 2023:    {round(total_deadAGB23/1000)} tonnen")
+    print(f"Mean biomass per tree in 2023: {biomass23['AGB'].mean()}")
 
 # ## Plots ################################################################################################################################
-# Ensure the plots directory exists before saving
+
 os.makedirs(f"{basepath}/results/plots", exist_ok=True)
 
-if "2016" in years:
+if "bonn_2016" in aoi:
 
     # 1. AGB Histogram 2016
     biomass16["AGB"].hist(bins=50)
@@ -161,7 +180,7 @@ if "2016" in years:
     if export_plots: plt.savefig(f"{basepath}/results/plots/treespecies_2016_pie.png", bbox_inches="tight")
     plt.close()
 
-if "2021" in years:
+if "bonn_2021" in aoi:
 
     # 2. AGB Histogram 2021
     biomass21["AGB"].hist(bins=50)
@@ -208,9 +227,65 @@ if "2021" in years:
     if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2021_hist.png", bbox_inches="tight")
     plt.close()
 
+if "auwald_2023" in aoi:
+
+    # AGB Histogram 2023
+    biomass23["AGB"].hist(bins=50)
+    plt.title("per Tree AGB in 2023")
+    plt.xlabel("Tree AGB (kg)")
+    plt.ylabel("Number of Tree AGBs in 2023")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/agb_2023_hist.png", bbox_inches="tight")
+    plt.close()
+
+    # Tree Height vs Crown Diameter 2023
+    biomass23.plot.scatter(x="treeheight", y="diameter", figsize=(8, 5), alpha=0.5, title="Tree Height vs. Crown Diameter in 2023")
+    plt.xlabel("Tree Height (m)")
+    plt.ylabel("Crown Diameter (m)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_diameter_2023.png", bbox_inches="tight")
+    plt.close()
+
+    # Crown Diameter vs AGB 2023
+    biomass23.plot.scatter(x="diameter", y="AGB", figsize=(8, 5), alpha=0.5, title="Diameter vs. AGB in 2023")
+    plt.xlabel("Crown Diameter (m)")
+    plt.ylabel("AGB (kg)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_vs_agb_2023.png", bbox_inches="tight")
+    plt.close()
+
+    # Tree Height vs AGB 2023
+    biomass23.plot.scatter(x="treeheight", y="AGB", figsize=(8, 5), alpha=0.5, title="Tree Height vs. AGB in 2023")
+    plt.xlabel("Tree Height (m)")
+    plt.ylabel("AGB (kg)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2023.png", bbox_inches="tight")
+    plt.close()
+
+    # histogram treeheight 2023
+    biomass23["treeheight"].hist(bins=50)
+    plt.title("per Tree treeheight in 2023")
+    plt.xlabel("Treeheight (m)")
+    plt.ylabel("Treeheight in 2023")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/treeheight_2023_hist.png", bbox_inches="tight")
+    plt.close()
+
+    # histogram diameter 2023
+    biomass23["diameter"].hist(bins=50)
+    plt.title("per Tree crown diameter in 2023")
+    plt.xlabel("Crown diameter (m)")
+    plt.ylabel("Number of trees in 2023")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2023_hist.png", bbox_inches="tight")
+    plt.close()
+
+    # pie chart treespecies 2023
+    counts = biomass23["treespecies"].value_counts()
+    fig, ax = plt.subplots(figsize=(7, 7))
+    ax.pie(counts.values, labels=counts.index, autopct="%1.1f%%", startangle=90)
+    ax.set_title("Tree species in 2023")
+    ax.axis("equal")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/treespecies_2023_pie.png", bbox_inches="tight")
+    plt.close()
+
 # ## plot from [jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) (fig. 6)
 
-if "2016" in years:
+if "bonn_2016" in aoi:
     biomass16["height x crown diameter"] = biomass16["diameter"] * biomass16["treeheight"]
 
     fig, ax = plt.subplots(figsize=(7, 7))
@@ -241,7 +316,7 @@ if "2016" in years:
     if export_plots: plt.savefig(f"{basepath}/results/plots/publication_plot_2016.png", bbox_inches="tight")
     plt.close()
 
-if "2021" in years:
+if "bonn_2021" in aoi:
     biomass21["height x crown diameter"] = biomass21["diameter"] * biomass21["treeheight"]
 
     biomass21["height x crown diameter"].hist(bins=50)
@@ -249,4 +324,14 @@ if "2021" in years:
     plt.xlabel("Height (m) × Crown diameter (m)")
     plt.ylabel("Number of Trees")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_x_diameter_2021_hist.png", bbox_inches="tight")
+    plt.close()
+
+if "auwald_2023" in aoi:
+    biomass23["height x crown diameter"] = biomass23["diameter"] * biomass23["treeheight"]
+
+    biomass23["height x crown diameter"].hist(bins=50)
+    plt.title("Height (m) × Crown diameter (m) for dead trees 2023")
+    plt.xlabel("Height (m) × Crown diameter (m)")
+    plt.ylabel("Number of Trees")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/height_x_diameter_2023_hist.png", bbox_inches="tight")
     plt.close()
