@@ -6,6 +6,7 @@
 import geopandas as gpd
 import rasterio, pandas
 import argparse
+
 from functions.estimate_biomass import estimate_biomass
 from functions.get_diameter import *
 from functions.get_treespecies import *
@@ -20,7 +21,7 @@ import matplotlib.pyplot as plt
 # ## define basepath/settings ################################################################################################################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/mini_run")
+parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/auwald_run")
 parser.add_argument("--aoi", nargs="+", default=["auwald_2023"])
 parser.add_argument("--export_results", action="store_true")
 parser.add_argument("--export_plots", action="store_true")
@@ -31,6 +32,7 @@ aoi = args.aoi
 export_results = args.export_results
 export_plots = args.export_plots
 
+filter_by_CHM = True
 
 # ## load polygons ################################################################################################################################
 
@@ -73,20 +75,22 @@ if "bonn_2021" in aoi:
     treeheights21 = get_treeheight_fromfile(polygon=trees21, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale=False)
 if "auwald_2023" in aoi:
     treeheights23 = get_treeheight_fromfile(polygon=trees23, raster_path=f"{basepath}/treeheight/CHM_1m_auwald.tif", scale=False)
+    r = treeheights23["treeheight"].corr(treeheights23["diameter"])
+    print(f"corellation between treeheight and diameter: {r}")
+
 print("Tree heights were derived.")
 
-# handle zeros in treeheight by using mean instead
 
-remove_zeros = False
+### filtering ############################################################################################################
+# Because trees with a height of >3m seem off, they get filtered here
 
-if remove_zeros:  # Trees with 0 as treeheight, get the mean treeheight instead
+if filter_by_CHM:
     if "bonn_2016" in aoi:
-        treeheights16.loc[treeheights16["treeheight"] == 0, "treeheight"] = treeheights16["treeheight"].mean()
+        treeheights16 = treeheights16[treeheights16["treeheight"] >= 3]
     if "bonn_2021" in aoi:
-        treeheights21.loc[treeheights21["treeheight"] == 0, "treeheight"] = treeheights21["treeheight"].mean()
+        treeheights21 = treeheights21[treeheights21["treeheight"] >= 3]
     if "auwald_2023" in aoi:
-        treeheights23.loc[treeheights23["treeheight"] == 0, "treeheight"] = treeheights23["treeheight"].mean()
-
+        treeheights23 = treeheights23[treeheights23["treeheight"] >= 3]
 
 
 ### estimate biomass ################################################################################################################################
@@ -320,7 +324,7 @@ if "bonn_2021" in aoi:
     biomass21["height x crown diameter"] = biomass21["diameter"] * biomass21["treeheight"]
 
     biomass21["height x crown diameter"].hist(bins=50)
-    plt.title("Height (m) × Crown diameter (m) for dead trees 2021")
+    plt.title("Height (m) × Crown diameter (m) for trees 2021")
     plt.xlabel("Height (m) × Crown diameter (m)")
     plt.ylabel("Number of Trees")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_x_diameter_2021_hist.png", bbox_inches="tight")
@@ -330,7 +334,7 @@ if "auwald_2023" in aoi:
     biomass23["height x crown diameter"] = biomass23["diameter"] * biomass23["treeheight"]
 
     biomass23["height x crown diameter"].hist(bins=50)
-    plt.title("Height (m) × Crown diameter (m) for dead trees 2023")
+    plt.title("Height (m) × Crown diameter (m) for trees 2023")
     plt.xlabel("Height (m) × Crown diameter (m)")
     plt.ylabel("Number of Trees")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_x_diameter_2023_hist.png", bbox_inches="tight")
