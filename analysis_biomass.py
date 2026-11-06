@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 #####################################################################################################################################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/auwald_run")
+parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/auwald_run_hightrees")
 parser.add_argument("--aoi", nargs="+", default=["auwald_2023"])
 parser.add_argument("--export_results", action="store_true")
 parser.add_argument("--export_plots", action="store_true")
@@ -34,7 +34,12 @@ aoi = args.aoi
 export_results = args.export_results
 export_plots = args.export_plots
 
-filter_by_CHM = True
+filter_by_CHM = True # trees with a height lower than
+# this get filter out. ( the tree height is derived using the max. values o fthe CHM that in the polygon)
+filter_height = 10
+
+filter_by_ndvi = True # trees with a ndvi lower than this get filter out. (the ndvi is derived using the 20cm DOPs mean value of pixels that intersect with the polygon)
+filter_ndvi = 0.3
 
 #####################################################################################################################################################
 # ## load polygons ################################################################################################################################
@@ -104,15 +109,17 @@ print("Tree heights were derived.")
 #####################################################################################################################################################
 ### filtering ############################################################################################################
 #####################################################################################################################################################
-# Because trees with a height of >3m seem off, they get filtered here
+# Because trees with a low height and/or ndvi seem off, they get filtered here
 
 if filter_by_CHM:
-    if "bonn_2016" in aoi:
-        treeheights16 = treeheights16[treeheights16["treeheight"] >= 3]
-    if "bonn_2021" in aoi:
-        treeheights21 = treeheights21[treeheights21["treeheight"] >= 3]
-    if "auwald_2023" in aoi:
-        treeheights23 = treeheights23[treeheights23["treeheight"] >= 3]
+    if "bonn_2016" in aoi: treeheights16 = treeheights16[treeheights16["treeheight"] >= filter_height]
+    if "bonn_2021" in aoi: treeheights21 = treeheights21[treeheights21["treeheight"] >= filter_height]
+    if "auwald_2023" in aoi: treeheights23 = treeheights23[treeheights23["treeheight"] >= filter_height]
+
+if filter_by_ndvi:
+    if "bonn_2016" in aoi: treeheights16 = treeheights16[treeheights16["ndvi"] >= filter_ndvi]
+    if "bonn_2021" in aoi: treeheights21 = treeheights21[treeheights21["ndvi"] >= filter_ndvi]
+    if "auwald_2023" in aoi: treeheights23 = treeheights23[treeheights23["ndvi"] >= filter_ndvi]
 
 #####################################################################################################################################################
 ### estimate biomass ################################################################################################################################
@@ -155,6 +162,9 @@ if "auwald_2023" in aoi:
 #####################################################################################################################################################
 # ## Plots ################################################################################################################################
 #####################################################################################################################################################
+#####################################################################################################################################################
+# ## Plots ################################################################################################################################
+#####################################################################################################################################################
 
 os.makedirs(f"{basepath}/results/plots", exist_ok=True)
 
@@ -170,22 +180,22 @@ if "bonn_2016" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/agb_2016_hist.png", bbox_inches="tight")
     plt.close()
 
-    # 3. Tree Height vs Crown Diameter 2016
-    biomass16.plot.scatter(x="treeheight", y="diameter", figsize=(8, 5), alpha=0.5, title="Tree Height vs. Crown Diameter in 2016")
+    # 3. Tree Height vs Crown Diameter 2016 (Heatmap)
+    biomass16.plot.hexbin(x="treeheight", y="diameter", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Tree Height vs. Crown Diameter in 2016")
     plt.xlabel("Tree Height (m)")
     plt.ylabel("Crown Diameter (m)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_diameter_2016.png", bbox_inches="tight")
     plt.close()
 
-    # 5. Crown Diameter vs AGB 2016
-    biomass16.plot.scatter(x="diameter", y="AGB", figsize=(8, 5), alpha=0.5, title="Diameter vs. AGB in 2016")
+    # 5. Crown Diameter vs AGB 2016 (Heatmap)
+    biomass16.plot.hexbin(x="diameter", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Diameter vs. AGB in 2016")
     plt.xlabel("Crown Diameter (m)")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_vs_agb_2016.png", bbox_inches="tight")
     plt.close()
 
-    # 7. Tree Height vs AGB 2016
-    biomass16.plot.scatter(x="treeheight", y="AGB", figsize=(8, 5), alpha=0.5, title="Tree Height vs. AGB in 2016")
+    # 7. Tree Height vs AGB 2016 (Heatmap)
+    biomass16.plot.hexbin(x="treeheight", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Tree Height vs. AGB in 2016")
     plt.xlabel("Tree Height (m)")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2016.png", bbox_inches="tight")
@@ -224,15 +234,15 @@ if "bonn_2016" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_2016_hist.png", bbox_inches="tight")
     plt.close()
 
-    # NDVI vs AGB 2016
-    biomass16.plot.scatter(x="ndvi", y="AGB", figsize=(8, 5), alpha=0.5, title="NDVI vs. AGB in 2016")
+    # NDVI vs AGB 2016 (Heatmap)
+    biomass16.plot.hexbin(x="ndvi", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="NDVI vs. AGB in 2016")
     plt.xlabel("NDVI")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_agb_2016.png", bbox_inches="tight")
     plt.close()
 
-    # NDVI vs Tree Height 2016
-    biomass16.plot.scatter(x="ndvi", y="treeheight", figsize=(8, 5), alpha=0.5, title="NDVI vs. Tree Height in 2016")
+    # NDVI vs Tree Height 2016 (Heatmap)
+    biomass16.plot.hexbin(x="ndvi", y="treeheight", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="NDVI vs. Tree Height in 2016")
     plt.xlabel("NDVI")
     plt.ylabel("Tree Height (m)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_height_2016.png", bbox_inches="tight")
@@ -250,22 +260,22 @@ if "bonn_2021" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/agb_2021_hist.png", bbox_inches="tight")
     plt.close()
 
-    # 4. Tree Height vs Crown Diameter 2021
-    biomass21.plot.scatter(x="treeheight", y="diameter", figsize=(8, 5), alpha=0.5, title="Tree Height vs. Crown Diameter in 2021")
+    # 4. Tree Height vs Crown Diameter 2021 (Heatmap)
+    biomass21.plot.hexbin(x="treeheight", y="diameter", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Tree Height vs. Crown Diameter in 2021")
     plt.xlabel("Tree Height (m)")
     plt.ylabel("Crown Diameter (m)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_diameter_2021.png", bbox_inches="tight")
     plt.close()
 
-    # 6. Crown Diameter vs AGB 2021
-    biomass21.plot.scatter(x="diameter", y="AGB", figsize=(8, 5), alpha=0.5, title="Diameter vs. AGB in 2021")
+    # 6. Crown Diameter vs AGB 2021 (Heatmap)
+    biomass21.plot.hexbin(x="diameter", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Diameter vs. AGB in 2021")
     plt.xlabel("Crown Diameter (m)")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_vs_agb_2021.png", bbox_inches="tight")
     plt.close()
 
-    # 8. Tree Height vs AGB 2021
-    biomass21.plot.scatter(x="treeheight", y="AGB", figsize=(8, 5), alpha=0.5, title="Tree Height vs. AGB in 2021")
+    # 8. Tree Height vs AGB 2021 (Heatmap)
+    biomass21.plot.hexbin(x="treeheight", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Tree Height vs. AGB in 2021")
     plt.xlabel("Tree Height (m)")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2021.png", bbox_inches="tight")
@@ -295,15 +305,15 @@ if "bonn_2021" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_2021_hist.png", bbox_inches="tight")
     plt.close()
 
-    # NDVI vs AGB 2021
-    biomass21.plot.scatter(x="ndvi", y="AGB", figsize=(8, 5), alpha=0.5, title="NDVI vs. AGB in 2021")
+    # NDVI vs AGB 2021 (Heatmap)
+    biomass21.plot.hexbin(x="ndvi", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="NDVI vs. AGB in 2021")
     plt.xlabel("NDVI")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_agb_2021.png", bbox_inches="tight")
     plt.close()
 
-    # NDVI vs Tree Height 2021
-    biomass21.plot.scatter(x="ndvi", y="treeheight", figsize=(8, 5), alpha=0.5, title="NDVI vs. Tree Height in 2021")
+    # NDVI vs Tree Height 2021 (Heatmap)
+    biomass21.plot.hexbin(x="ndvi", y="treeheight", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="NDVI vs. Tree Height in 2021")
     plt.xlabel("NDVI")
     plt.ylabel("Tree Height (m)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_height_2021.png", bbox_inches="tight")
@@ -321,22 +331,22 @@ if "auwald_2023" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/agb_2023_hist.png", bbox_inches="tight")
     plt.close()
 
-    # Tree Height vs Crown Diameter 2023
-    biomass23.plot.scatter(x="treeheight", y="diameter", figsize=(8, 5), alpha=0.5, title="Tree Height vs. Crown Diameter in 2023")
+    # Tree Height vs Crown Diameter 2023 (Heatmap)
+    biomass23.plot.hexbin(x="treeheight", y="diameter", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Tree Height vs. Crown Diameter in 2023")
     plt.xlabel("Tree Height (m)")
     plt.ylabel("Crown Diameter (m)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_diameter_2023.png", bbox_inches="tight")
     plt.close()
 
-    # Crown Diameter vs AGB 2023
-    biomass23.plot.scatter(x="diameter", y="AGB", figsize=(8, 5), alpha=0.5, title="Diameter vs. AGB in 2023")
+    # Crown Diameter vs AGB 2023 (Heatmap)
+    biomass23.plot.hexbin(x="diameter", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Diameter vs. AGB in 2023")
     plt.xlabel("Crown Diameter (m)")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_vs_agb_2023.png", bbox_inches="tight")
     plt.close()
 
-    # Tree Height vs AGB 2023
-    biomass23.plot.scatter(x="treeheight", y="AGB", figsize=(8, 5), alpha=0.5, title="Tree Height vs. AGB in 2023")
+    # Tree Height vs AGB 2023 (Heatmap)
+    biomass23.plot.hexbin(x="treeheight", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="Tree Height vs. AGB in 2023")
     plt.xlabel("Tree Height (m)")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/height_vs_agb_2023.png", bbox_inches="tight")
@@ -375,19 +385,20 @@ if "auwald_2023" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_2023_hist.png", bbox_inches="tight")
     plt.close()
 
-    # NDVI vs AGB 2023
-    biomass23.plot.scatter(x="ndvi", y="AGB", figsize=(8, 5), alpha=0.5, title="NDVI vs. AGB in 2023")
+    # NDVI vs AGB 2023 (Heatmap)
+    biomass23.plot.hexbin(x="ndvi", y="AGB", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="NDVI vs. AGB in 2023")
     plt.xlabel("NDVI")
     plt.ylabel("AGB (kg)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_agb_2023.png", bbox_inches="tight")
     plt.close()
 
-    # NDVI vs Tree Height 2023
-    biomass23.plot.scatter(x="ndvi", y="treeheight", figsize=(8, 5), alpha=0.5, title="NDVI vs. Tree Height in 2023")
+    # NDVI vs Tree Height 2023 (Heatmap)
+    biomass23.plot.hexbin(x="ndvi", y="treeheight", gridsize=60, cmap="viridis", mincnt=1, figsize=(8, 5), title="NDVI vs. Tree Height in 2023")
     plt.xlabel("NDVI")
     plt.ylabel("Tree Height (m)")
     if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_height_2023.png", bbox_inches="tight")
     plt.close()
+
 
 # ## plot from [jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) (fig. 6)
 
@@ -401,8 +412,9 @@ if "bonn_2016" in aoi:
     conifers = biomass16[biomass16["treetype"] == "coniferous"]
     broadleaved = biomass16[biomass16["treetype"] == "broadleaved"]
 
-    ax.scatter(conifers["height x crown diameter"], conifers["AGB"], color="darkgreen", marker="o", label="Gymnosperms")
-    ax.scatter(broadleaved["height x crown diameter"], broadleaved["AGB"], color="lightgreen", edgecolors="grey", marker="o", label="Angiosperms")
+    # Applied alpha=0.4 and edgecolors="none" to prevent solid blobs of overlapping points
+    ax.scatter(conifers["height x crown diameter"], conifers["AGB"], color="darkgreen", marker="o", label="Gymnosperms", alpha=0.4, edgecolors="none")
+    ax.scatter(broadleaved["height x crown diameter"], broadleaved["AGB"], color="lightgreen", marker="o", label="Angiosperms", alpha=0.4, edgecolors="none")
 
     ax.set_xscale("log")
     ax.set_yscale("log")
