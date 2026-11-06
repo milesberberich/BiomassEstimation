@@ -11,14 +11,16 @@ from functions.estimate_biomass import estimate_biomass
 from functions.get_diameter import *
 from functions.get_treespecies import *
 from functions.get_treeheight import *
+from functions.get_ndvi import *
 from functions.histogram_treespecies import *
 import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-
+#####################################################################################################################################################
 # ## define basepath/settings ################################################################################################################################
+#####################################################################################################################################################
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/auwald_run")
@@ -34,7 +36,9 @@ export_plots = args.export_plots
 
 filter_by_CHM = True
 
+#####################################################################################################################################################
 # ## load polygons ################################################################################################################################
+#####################################################################################################################################################
 
 if "bonn_2016" in aoi:
     trees16 = gpd.read_file(f"{basepath}/trees/bonn_2016_vital.geojson")
@@ -44,8 +48,21 @@ if "auwald_2023" in aoi:
     trees23 = gpd.read_file(f"{basepath}/trees/auwald_2023_vital.geojson")
 print("Polygons were loaded.")
 
-# ## calculate diameter ################################################################################################################################
+#####################################################################################################################################################
+# ## calculate NDVI ################################################################################################################################
+#####################################################################################################################################################
 
+if "bonn_2016" in aoi:
+    trees16 = get_ndvi(trees16, f"{basepath}/ndvi/ndvi_bonn_2016.tif")
+if "bonn_2021" in aoi:
+    trees21 = get_ndvi(trees21, f"{basepath}/ndvi/ndvi_bonn_2021.tif")
+if "auwald_2023" in aoi:
+    trees23 = get_ndvi(trees23, f"{basepath}/ndvi/ndvi_auwald.tif")
+print("NDVI values were derived and polygons reprojected.")
+
+#####################################################################################################################################################
+# ## calculate diameter ################################################################################################################################
+#####################################################################################################################################################
 if "bonn_2016" in aoi:
     trees16 = get_diameter(trees16)
 if "bonn_2021" in aoi:
@@ -54,7 +71,9 @@ if "auwald_2023" in aoi:
     trees23 = get_diameter(trees23)
 print("Crown diameters were calculated.")
 
+#####################################################################################################################################################
 # ## get tree species ################################################################################################################################
+#####################################################################################################################################################
 
 if "bonn_2016" in aoi:
     trees16 = get_treespecies(polygon=trees16, raster_path=f"{basepath}/treespecies/treespecies_blickensdoerfer.tif", data_source="blickensdoerfer")
@@ -65,7 +84,9 @@ if "auwald_2023" in aoi:
     trees23 = trees23.fillna({"treetype": "broadleaved"})    # fill NA! auwald dominated by oak...
 print("Tree species were derived.")
 
+#####################################################################################################################################################
 # ## get tree height ################################################################################################################################
+#####################################################################################################################################################
 
 if "bonn_2016" in aoi:
     treeheights16 = get_treeheight_fromfile(polygon=trees16, raster_path=f"{basepath}/treeheight/CHM_1m_bonn.tif", scale=False)
@@ -80,8 +101,9 @@ if "auwald_2023" in aoi:
 
 print("Tree heights were derived.")
 
-
+#####################################################################################################################################################
 ### filtering ############################################################################################################
+#####################################################################################################################################################
 # Because trees with a height of >3m seem off, they get filtered here
 
 if filter_by_CHM:
@@ -92,8 +114,9 @@ if filter_by_CHM:
     if "auwald_2023" in aoi:
         treeheights23 = treeheights23[treeheights23["treeheight"] >= 3]
 
-
+#####################################################################################################################################################
 ### estimate biomass ################################################################################################################################
+#####################################################################################################################################################
 
 if "bonn_2016" in aoi:
     biomass16 = estimate_biomass(treeheights16)
@@ -110,6 +133,11 @@ if export_results:
         biomass21.to_file(f"{basepath}/results/biomass/biomass21.geojson", driver="GeoJSON")
     if "auwald_2023" in aoi:
         biomass23.to_file(f"{basepath}/results/biomass/biomass23.geojson", driver="GeoJSON")
+print("polygons saved")
+
+#####################################################################################################################################################
+# ## summary ################################################################################################################################
+#####################################################################################################################################################
 
 if "bonn_2016" in aoi:
     total_deadAGB16 = sum(biomass16["AGB"])
@@ -124,11 +152,15 @@ if "auwald_2023" in aoi:
     print(f" tree biomass 2023:    {round(total_deadAGB23/1000)} tonnen")
     print(f"Mean biomass per tree in 2023: {biomass23['AGB'].mean()}")
 
+#####################################################################################################################################################
 # ## Plots ################################################################################################################################
+#####################################################################################################################################################
 
 os.makedirs(f"{basepath}/results/plots", exist_ok=True)
 
+# # # # # # # # # # #
 if "bonn_2016" in aoi:
+# # # # # # # # # # #
 
     # 1. AGB Histogram 2016
     biomass16["AGB"].hist(bins=50)
@@ -184,7 +216,31 @@ if "bonn_2016" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/treespecies_2016_pie.png", bbox_inches="tight")
     plt.close()
 
+    # NDVI Histogram 2016
+    biomass16["ndvi"].hist(bins=50)
+    plt.title("per Tree NDVI in 2016")
+    plt.xlabel("NDVI")
+    plt.ylabel("Number of trees in 2016")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_2016_hist.png", bbox_inches="tight")
+    plt.close()
+
+    # NDVI vs AGB 2016
+    biomass16.plot.scatter(x="ndvi", y="AGB", figsize=(8, 5), alpha=0.5, title="NDVI vs. AGB in 2016")
+    plt.xlabel("NDVI")
+    plt.ylabel("AGB (kg)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_agb_2016.png", bbox_inches="tight")
+    plt.close()
+
+    # NDVI vs Tree Height 2016
+    biomass16.plot.scatter(x="ndvi", y="treeheight", figsize=(8, 5), alpha=0.5, title="NDVI vs. Tree Height in 2016")
+    plt.xlabel("NDVI")
+    plt.ylabel("Tree Height (m)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_height_2016.png", bbox_inches="tight")
+    plt.close()
+
+# # # # # # # # # # #
 if "bonn_2021" in aoi:
+# # # # # # # # # # #
 
     # 2. AGB Histogram 2021
     biomass21["AGB"].hist(bins=50)
@@ -231,7 +287,31 @@ if "bonn_2021" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/diameter_2021_hist.png", bbox_inches="tight")
     plt.close()
 
+    # NDVI Histogram 2021
+    biomass21["ndvi"].hist(bins=50)
+    plt.title("per Tree NDVI in 2021")
+    plt.xlabel("NDVI")
+    plt.ylabel("Number of trees in 2021")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_2021_hist.png", bbox_inches="tight")
+    plt.close()
+
+    # NDVI vs AGB 2021
+    biomass21.plot.scatter(x="ndvi", y="AGB", figsize=(8, 5), alpha=0.5, title="NDVI vs. AGB in 2021")
+    plt.xlabel("NDVI")
+    plt.ylabel("AGB (kg)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_agb_2021.png", bbox_inches="tight")
+    plt.close()
+
+    # NDVI vs Tree Height 2021
+    biomass21.plot.scatter(x="ndvi", y="treeheight", figsize=(8, 5), alpha=0.5, title="NDVI vs. Tree Height in 2021")
+    plt.xlabel("NDVI")
+    plt.ylabel("Tree Height (m)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_height_2021.png", bbox_inches="tight")
+    plt.close()
+
+# # # # # # # # # # #
 if "auwald_2023" in aoi:
+# # # # # # # # # # #
 
     # AGB Histogram 2023
     biomass23["AGB"].hist(bins=50)
@@ -287,9 +367,34 @@ if "auwald_2023" in aoi:
     if export_plots: plt.savefig(f"{basepath}/results/plots/treespecies_2023_pie.png", bbox_inches="tight")
     plt.close()
 
+    # NDVI Histogram 2023
+    biomass23["ndvi"].hist(bins=50)
+    plt.title("per Tree NDVI in 2023")
+    plt.xlabel("NDVI")
+    plt.ylabel("Number of trees in 2023")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_2023_hist.png", bbox_inches="tight")
+    plt.close()
+
+    # NDVI vs AGB 2023
+    biomass23.plot.scatter(x="ndvi", y="AGB", figsize=(8, 5), alpha=0.5, title="NDVI vs. AGB in 2023")
+    plt.xlabel("NDVI")
+    plt.ylabel("AGB (kg)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_agb_2023.png", bbox_inches="tight")
+    plt.close()
+
+    # NDVI vs Tree Height 2023
+    biomass23.plot.scatter(x="ndvi", y="treeheight", figsize=(8, 5), alpha=0.5, title="NDVI vs. Tree Height in 2023")
+    plt.xlabel("NDVI")
+    plt.ylabel("Tree Height (m)")
+    if export_plots: plt.savefig(f"{basepath}/results/plots/ndvi_vs_height_2023.png", bbox_inches="tight")
+    plt.close()
+
 # ## plot from [jucker et al.](https://onlinelibrary.wiley.com/doi/10.1111/gcb.13388) (fig. 6)
 
+# # # # # # # # # # #
 if "bonn_2016" in aoi:
+# # # # # # # # # # #
+
     biomass16["height x crown diameter"] = biomass16["diameter"] * biomass16["treeheight"]
 
     fig, ax = plt.subplots(figsize=(7, 7))
