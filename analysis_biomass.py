@@ -34,11 +34,10 @@ aoi = args.aoi
 export_results = args.export_results
 export_plots = args.export_plots
 
-filter_by_CHM = True # trees with a height lower than
-# this get filter out. ( the tree height is derived using the max. values of the CHM that in the polygon)
-filter_height = 10
+filter_by_CHM = True # trees with a height lower than this get filter out. (the tree height is derived using the max. values of the CHM that in the polygon)
+filter_height = 7.5
 
-filter_by_ndvi = True # trees with a ndvi lower than this get filter out. (the ndvi is derived using the 20cm DOPs mean/median value of pixels that intersect with the polygon)
+filter_by_ndvi = False # trees with a ndvi lower than this get filter out. (the ndvi is derived using the 20cm DOPs mean/median value of pixels that intersect with the polygon)
 filter_ndvi = 0.3
 
 #####################################################################################################################################################
@@ -147,19 +146,19 @@ if "bonn_2016" in aoi:
     print(f" tree biomass 2016:     {round(total_deadAGB16/1000)} tonnen")
     print(f"Mean biomass per tree in 2016: {biomass16['AGB'].mean()}")
     r = biomass21["treeheight"].corr(biomass21["diameter"])
-    print(f"corellation between treeheight and diameter: {round(r)}")
+    print(f"corellation between treeheight and diameter: {round(r, 4)}")
 if "bonn_2021" in aoi:
     total_deadAGB21 = sum(biomass21["AGB"])
     print(f" tree biomass 2021:    {round(total_deadAGB21/1000)} tonnen")
     print(f"Mean biomass per tree in 2021: {biomass21['AGB'].mean()}")
     r = biomass21["treeheight"].corr(biomass21["diameter"])
-    print(f"corellation between treeheight and diameter: {round(r)}")
+    print(f"corellation between treeheight and diameter: {round(r, 4)}")
 if "auwald_2023" in aoi:
     total_deadAGB23 = sum(biomass23["AGB"])
     print(f" tree biomass 2023:    {round(total_deadAGB23/1000)} tonnen")
     print(f"Mean biomass per tree in 2023: {biomass23['AGB'].mean()}")
     r = biomass23["treeheight"].corr(biomass23["diameter"])
-    print(f"corellation between treeheight and diameter: {round(r)}")
+    print(f"corellation between treeheight and diameter: {round(r, 4)}")
 
 #####################################################################################################################################################
 # ## Plots ################################################################################################################################
