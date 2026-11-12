@@ -23,8 +23,8 @@ import matplotlib.pyplot as plt
 #####################################################################################################################################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry")
-parser.add_argument("--aoi", nargs="+", default=["bonn_2016"])
+parser.add_argument("--basepath", type=str, default="/home/berberic/Documents/allometry/auwald_run_mayyolopolys")
+parser.add_argument("--aoi", nargs="+", default=["auwald_2023"])
 parser.add_argument("--export_results", action="store_true")
 parser.add_argument("--export_plots", action="store_true")
 args = parser.parse_args()
@@ -56,11 +56,11 @@ print("Polygons were loaded.")
 # ## calculate NDVI ################################################################################################################################
 #####################################################################################################################################################
 
-if "bonn_2016" in aoi and filter_ndvi == True:
+if "bonn_2016" in aoi:
     trees16 = get_ndvi(trees16, f"{basepath}/ndvi/ndvi_bonn_2016.tif")
-if "bonn_2021" in aoi and filter_ndvi == True:
+if "bonn_2021" in aoi:
     trees21 = get_ndvi(trees21, f"{basepath}/ndvi/ndvi_bonn_2021.tif")
-if "auwald_2023" in aoi and filter_ndvi == True:
+if "auwald_2023" in aoi:
     trees23 = get_ndvi(trees23, f"{basepath}/ndvi/ndvi_auwald.tif")
 print("NDVI values were derived and polygons reprojected.")
 

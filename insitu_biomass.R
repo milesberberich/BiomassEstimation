@@ -39,3 +39,15 @@ trees$AGB <- getBiomass(bdat_trees)
 paste("final biomass is:", round(sum(trees$AGB)/1000, 1), "Mg.")
 paste(nrow(trees), "of", total_number_of_trees, "were used. Missing data (DBH and tree height) from 2017 was filled with values from 2020.")
 paste("Mean Biomass per tree is:", round(sum(trees$AGB)/nrow(trees)), "kg.")
+
+# saving clean version ##############################
+
+
+trees_og <- terra::vect("/home/berberic/Documents/allometry/insitu/insitu_tree_auwaldtile.geojson")
+trees_og <- trees_og[valid_rows]
+trees$hG17 <- trees_og$hG17
+trees$hG20 <- trees_og$hG20
+trees$BHD17 <- trees_og$BHD17
+trees$BHD20 <- trees_og$BHD20
+
+#terra::writeVector(trees, "/home/berberic/Documents/allometry/results in situ biomass/results_insitu_biomass.geojson")
