@@ -35,7 +35,7 @@ export_results = args.export_results
 export_plots = args.export_plots
 
 filter_by_CHM = True # trees with a height lower than this get filter out. (the tree height is derived using the max. values of the CHM that in the polygon)
-filter_height = 7.5
+filter_height = 2.5
 
 filter_by_ndvi = False # trees with a ndvi lower than this get filter out. (the ndvi is derived using the 20cm DOPs mean/median value of pixels that intersect with the polygon)
 filter_ndvi = 0.3
