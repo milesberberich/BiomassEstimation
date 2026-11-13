@@ -4,10 +4,12 @@ library(rBDAT)
 library(terra)
 source("~/Documents/code/biomass/species_codes.R")
 
-#load data and apply legend ##############################
+#load data and apply legend (if wanted, filtered by Kraftscher Klasse) ##############################
 
 trees <- terra::vect("/home/berberic/Documents/allometry/insitu/insitu_tree_auwaldtile.geojson")
 total_number_of_trees <- nrow(trees)
+#trees <- trees[trees$kraftcode %in% c("5", "4", "3"), ] # KRAFT FILTER
+               
 # clean data for AGB estimation ##############################
 
 trees$species_code <- legend$species_codes[match(trees$BAUMART, legend$BAUMART)] # species code for rbdat
